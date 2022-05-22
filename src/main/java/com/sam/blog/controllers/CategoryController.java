@@ -29,11 +29,12 @@ public class CategoryController {
                                                       @PathVariable("catId") Integer id){
 
         CategoryDto categoryDto = this.categoryService.updateCategory(catDto, id);
+
         return new ResponseEntity<CategoryDto>(categoryDto, HttpStatus.OK);
     }
 
     @DeleteMapping("/{catId}")
-    public ResponseEntity<?> delteCategory(@PathVariable Integer id) {
+    public ResponseEntity<?> delteCategory(@PathVariable("catId") Integer id) {
 
         this.categoryService.deleteCategory(id);
         return new ResponseEntity<ApiResponse>(new ApiResponse("Category deleted successfully", true),
