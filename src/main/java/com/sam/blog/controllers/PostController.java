@@ -1,5 +1,6 @@
 package com.sam.blog.controllers;
 
+import com.sam.blog.payloads.ApiResponse;
 import com.sam.blog.payloads.PostDto;
 import com.sam.blog.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,32 @@ public class PostController {
         List<PostDto> postDtos = this.postService.getPostByCategory(categoryId);
 
         return new ResponseEntity<List<PostDto>>(postDtos, HttpStatus.OK);
+    }
+
+    @GetMapping("/posts")
+    public  ResponseEntity<List<PostDto>> getAllPosts(){
+        List<PostDto> postDtos = this.postService.getAllPosts();
+
+        return new ResponseEntity<List<PostDto>>(postDtos, HttpStatus.OK);
+    }
+    @GetMapping("/post/{postId}")
+    public  ResponseEntity<PostDto> getPostById(@PathVariable("postId") Integer id){
+        PostDto postDtos = this.postService.getPostById(id);
+
+        return new ResponseEntity<PostDto>(postDtos, HttpStatus.OK);
+    }
+
+    @PutMapping("/post/{postId}")
+    public ResponseEntity<PostDto>  updatePostById(@RequestBody PostDto postDto, @PathVariable("postId") Integer id){
+
+        PostDto dto = this.postService.updatePost(postDto, id);
+        return new ResponseEntity<PostDto>(dto, HttpStatus.OK);
+    }
+    @DeleteMapping("/post/{postId}")
+    public ApiResponse deletePostById(@PathVariable("postId") Integer id){
+
+        this.postService.deletePost(id);
+        return new ApiResponse("Post is successfully deleted !!", true);
     }
 }
 
