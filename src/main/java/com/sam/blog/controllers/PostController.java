@@ -24,7 +24,6 @@ public class PostController {
                     @PathVariable("categoryId") Integer categoryId){
 
         PostDto newDto = this.postService.createPost(postDto, userid, categoryId);
-
         return new ResponseEntity<PostDto>(newDto, HttpStatus.CREATED);
     }
 
@@ -33,7 +32,6 @@ public class PostController {
             @PathVariable("userId") Integer userId){
 
         List<PostDto> postDtos = this.postService.getPostByUser(userId);
-
         return new ResponseEntity<List<PostDto>>(postDtos, HttpStatus.OK);
     }
 
@@ -42,20 +40,26 @@ public class PostController {
             @PathVariable("categoryId") Integer categoryId){
 
         List<PostDto> postDtos = this.postService.getPostByCategory(categoryId);
-
         return new ResponseEntity<List<PostDto>>(postDtos, HttpStatus.OK);
     }
 
     @GetMapping("/posts")
-    public  ResponseEntity<List<PostDto>> getAllPosts(){
-        List<PostDto> postDtos = this.postService.getAllPosts();
+    public  ResponseEntity<List<PostDto>> getAllPosts(
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "5", required = false) Integer pageSize,
+            @RequestParam(value = "sortBy", defaultValue = "id", required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir
+            ){
+
+        List<PostDto> postDtos = this.postService.getAllPosts(pageNumber, pageSize, sortBy, sortDir);
 
         return new ResponseEntity<List<PostDto>>(postDtos, HttpStatus.OK);
     }
+
+
     @GetMapping("/post/{postId}")
     public  ResponseEntity<PostDto> getPostById(@PathVariable("postId") Integer id){
         PostDto postDtos = this.postService.getPostById(id);
-
         return new ResponseEntity<PostDto>(postDtos, HttpStatus.OK);
     }
 

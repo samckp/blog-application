@@ -11,6 +11,10 @@ import com.sam.blog.repositories.UserRepository;
 import com.sam.blog.services.PostService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -72,16 +76,30 @@ public class PostServiceImpl implements PostService {
 
         Post post = this.postRepository.findById(id).orElseThrow(()->
                 new ResourceNotFoundException("Post", "post_Id", id));
-
         this.postRepository.delete(post);
     }
 
     @Override
-    public List<PostDto> getAllPosts() {
+    public List<PostDto> getAllPosts(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
 
-        List<Post> posts = this.postRepository.findAll();
+        Sort sort = (sortDir.equalsIgnoreCase("asc")
+                    ? Sort.by(sortBy).ascending()
+                    : Sort.by(sortBy).descending());
 
-        List<PostDto> postDto = posts.stream().map((post) ->
+        /*if(sortDir.equalsIgnoreCase("asc")){
+
+            sort = Sort.by(sortBy).ascending();
+        }else if(sortDir.equalsIgnoreCase("desc")){
+
+            sort = Sort.by(sortBy).descending();
+        }*/
+
+        Pageable p = PageRequest.of(pageNumber, pageSize, sort);
+
+        Page<Post> posts = this.postRepository.findAll(p);
+        List<Post> allPost = posts.getContent();
+
+        List<PostDto> postDto = allPost.stream().map((post) ->
                     this.modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
         return postDto;
     }
@@ -91,7 +109,6 @@ public class PostServiceImpl implements PostService {
 
         Post post = this.postRepository.findById(id).orElseThrow(()->
                 new ResourceNotFoundException("Post", "post_Id", id));
-
         return this.modelMapper.map(post, PostDto.class);
     }
 
@@ -116,7 +133,6 @@ public class PostServiceImpl implements PostService {
                 ()-> new ResourceNotFoundException("User", "id", id));
 
         List<Post> posts = this.postRepository.findByUser(user);
-
         List<PostDto> postDtos = posts.stream().map((post) -> this.modelMapper.map(
                 post, PostDto.class)).collect(Collectors.toList());
 
