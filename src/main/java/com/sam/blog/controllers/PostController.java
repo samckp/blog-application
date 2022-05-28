@@ -1,5 +1,6 @@
 package com.sam.blog.controllers;
 
+import com.sam.blog.config.AppConstant;
 import com.sam.blog.payloads.ApiResponse;
 import com.sam.blog.payloads.PostDto;
 import com.sam.blog.services.PostService;
@@ -45,10 +46,10 @@ public class PostController {
 
     @GetMapping("/posts")
     public  ResponseEntity<List<PostDto>> getAllPosts(
-            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
-            @RequestParam(value = "pageSize", defaultValue = "5", required = false) Integer pageSize,
-            @RequestParam(value = "sortBy", defaultValue = "id", required = false) String sortBy,
-            @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir
+            @RequestParam(value = "pageNumber", defaultValue = AppConstant.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = AppConstant.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(value = "sortBy", defaultValue = AppConstant.SORT_BY, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = AppConstant.SORT_DIRECTION, required = false) String sortDir
             ){
 
         List<PostDto> postDtos = this.postService.getAllPosts(pageNumber, pageSize, sortBy, sortDir);
@@ -74,6 +75,14 @@ public class PostController {
 
         this.postService.deletePost(id);
         return new ApiResponse("Post is successfully deleted !!", true);
+    }
+
+    @GetMapping("/post/search/{keyword}")
+    public ResponseEntity<List<PostDto>> searchByPostTitle(
+        @PathVariable("keyword") String keyword){
+
+        List<PostDto> dtos = this.postService.searchPost(keyword);
+        return new ResponseEntity<List<PostDto>>(dtos, HttpStatus.OK);
     }
 }
 
