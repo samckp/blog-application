@@ -6,7 +6,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name="tbl_user")
@@ -27,4 +29,10 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Post> posts = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(name="user_role",
+    joinColumn = @JoinColumn(name = "", referencedColumnName = ""))
+
+    private Set<Roles> roles = new HashSet<>();
 }
